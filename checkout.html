@@ -1,0 +1,40 @@
+<!-- cleaned 20260414 -->
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Checkout</title>
+</head>
+<body>
+
+<h1>Your Cart</h1>
+
+<ul id="cart-list"></ul>
+
+<button onclick="confirmOrder()">Confirm Order</button>
+
+<script>
+fetch('/cart')
+  .then(res => res.json())
+  .then(data => {
+    const list = document.getElementById("cart-list");
+
+    data.cart.forEach(item => {
+      const li = document.createElement("li");
+      li.textContent = "Item ID: " + item.item_id;
+      list.appendChild(li);
+    });
+  });
+
+function confirmOrder() {
+  fetch('/checkout', { method: 'POST' })
+    .then(res => res.json())
+    .then(data => {
+      alert(data.message);
+      window.location.href = "/";
+    });
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Orders</title>
+
+  <style>
+    .hidden {
+      display: none;
+    }
+
+    .order-box {
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>Order History</h1>
+
+<button id="refreshBtn">🔄 Refresh Orders</button>
+
+<p id="status"></p>
+
+<div id="orders"></div>
+
+<script>
+
+/* =========================
+   STATUS DISPLAY
+========================= */
+function setStatus(msg) {
+  document.getElementById("status").innerText = msg;
+}
+
+/* =========================
+   LOAD ORDERS
+========================= */
+async function loadOrders() {
+  setStatus("Loading orders...");
+
+  const container = document.getElementById('orders');
+  container.innerHTML = "<p>Refreshing...</p>";
+
+  try {
+    const response = await fetch(
+      "http://localhost:3000/orders?nocache=" + Date.now(),
+      {
+        method: "GET",
+        cache: "no-store"
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Server error: " + response.status);
+    }
+
+    const data = await response.json();
+
+    container.innerHTML = "";
+
+    if (!data.orders || data.orders.length === 0) {
+      container.innerHTML = "<p>No orders found.</p>";
+      setStatus("No orders in database.");
+      return;
+    }
+
+    data.orders.forEach(order => {
+      const div = document.createElement('div');
+      div.classList.add("order-box");
+
+      div.innerHTML = `
+        <hr>
+        <h3>Order #${order.id}</h3>
+        <p>Date: ${new Date(order.created_at + ' UTC').toLocaleString()}</p>
+
+        <button onclick="toggleItems(${order.id})">
+          View Items
+        </button>
+
+        <div id="items-${order.id}" class="hidden"></div>
+      `;
+
+      container.appendChild(div);
+    });
+
+    setStatus("Orders refreshed ✔");
+
+  } catch (err) {
+    console.error("FETCH ERROR:", err);
+
+    container.innerHTML = `
+      <p style="color:red;">
+        Cannot connect to server.<br>
+        Make sure backend is running on port 3000.
+      </p>
+    `;
+
+    setStatus("❌ Failed to load orders: " + err.message);
+  }
+}
+
+/* =========================
+   TOGGLE + LOAD ITEMS
+========================= */
+async function toggleItems(orderId) {
+
+  const container = document.getElementById('items-' + orderId);
+
+  // ✅ If already open → CLOSE
+  if (!container.classList.contains("hidden")) {
+    container.classList.add("hidden");
+    return;
+  }
+
+  // ✅ If already loaded → just OPEN (no fetch again)
+  if (container.dataset.loaded === "true") {
+    container.classList.remove("hidden");
+    return;
+  }
+
+  setStatus("Loading items for order #" + orderId);
+
+  try {
+    const response = await fetch(
+      `http://localhost:3000/orders/${orderId}?nocache=` + Date.now(),
+      { cache: "no-store" }
+    );
+
+    if (!response.ok) {
+      throw new Error("Server error: " + response.status);
+    }
+
+    const data = await response.json();
+
+    container.innerHTML = "";
+
+    if (!data.items || data.items.length === 0) {
+      container.innerHTML = "<p>No items in this order.</p>";
+      container.classList.remove("hidden");
+      return;
+    }
+
+    let total = 0;
+    let html = "<ul>";
+
+    data.items.forEach(item => {
+
+      const price = item.price || 0;
+      const quantity = item.quantity || 1;
+      const subtotal = price * quantity;
+
+      total += subtotal;
+
+      html += `
+        <li>
+          ${item.name} - $${price} × ${quantity}
+          = $${subtotal}
+        </li>
+      `;
+    });
+
+    html += "</ul>";
+
+    html += `<strong>Total: $${total}</strong>`;
+
+    container.innerHTML = html;
+
+    // ✅ mark as loaded
+    container.dataset.loaded = "true";
+
+    // ✅ show it
+    container.classList.remove("hidden");
+
+    setStatus("Items loaded ✔");
+
+  } catch (err) {
+    console.error("ITEM FETCH ERROR:", err);
+    setStatus("❌ Failed to load items: " + err.message);
+  }
+}
+
+/* =========================
+   EVENTS
+========================= */
+document.getElementById("refreshBtn").onclick = loadOrders;
+
+/* =========================
+   INITIAL LOAD
+========================= */
+window.onload = loadOrders;
+
+</script>
+
+</body>
+</html>

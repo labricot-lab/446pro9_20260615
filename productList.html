@@ -1,0 +1,136 @@
+<!-- iterating_20260414 -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eagle Items</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<!-- External CSS -->
+<link rel="stylesheet" href="external.css">
+
+<!-- Font Awesome for shopping cart icon -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="Types">
+
+<!-- ===========================
+      TITLE
+=========================== -->
+<div class="header">
+  Everything Birds - Items
+</div>
+
+<!-- ===========================
+      BOTTOM NAVIGATION
+=========================== -->
+<nav class="bottom-nav">
+  <a href="#" class="nav-link cart-link">
+    <i class="fas fa-shopping-cart"></i>
+  </a>
+
+  <a href="#" class="footer-icon">
+    © 2026 Copyleft favoriteproject
+  </a>
+</nav>
+
+<!-- ===========================
+      ITEM GRID
+=========================== -->
+<main class="item-container">
+
+  <section class="item">
+    <div class="item-image">
+      <img src="images/1eaglebottle.jpg" alt="Item 1">
+    </div>
+    <h2>Item 1: Eagle bottle $10</h2>
+    <p>Beautifully crafted eagle bottle.</p>
+    <button class="add-cart" data-id="1">Add to Cart</button>
+  </section>
+
+  <section class="item">
+    <div class="item-image">
+      <img src="images/2eagledart.jpg" alt="Item 2">
+    </div>
+    <h2>Item 2: Eagle Dart $15</h2>
+    <p>Cool eagle dart against your wall.</p>
+    <button class="add-cart" data-id="2">Add to Cart</button>
+  </section>
+
+  <section class="item">
+    <div class="item-image">
+      <img src="images/3eagletshirt.jpg" alt="Item 3">
+    </div>
+    <h2>Item 3: Eagle T-shirt $20</h2>
+    <p>High-quality T-shirt with eagle design.</p>
+    <button class="add-cart" data-id="3">Add to Cart</button>
+  </section>
+
+  <section class="item">
+    <div class="item-image">
+      <img src="images/4eagleties.jpg" alt="Item 4">
+    </div>
+    <h2>Item 4: Eagle Tie $35</h2>
+    <p>Eye-catching Ties featuring an eagle graphic.</p>
+    <button class="add-cart" data-id="4">Add to Cart</button>
+  </section>
+
+  <section class="item">
+    <div class="item-image">
+      <img src="images/5eaglering.jpg" alt="Item 5">
+    </div>
+    <h2>Item 5: Eagle Ring $40</h2>
+    <p>Rings with eagle-themed design.</p>
+    <button class="add-cart" data-id="5">Add to Cart</button>
+  </section>
+
+  <section class="item">
+    <div class="item-image">
+      <img src="images/6eaglemug.jpg" alt="Item 6">
+    </div>
+    <h2>Item 6: Eagle Mug $10</h2>
+    <p>Mugs with detailed eagle patterns.</p>
+    <button class="add-cart" data-id="6">Add to Cart</button>
+  </section>
+
+  <button onclick="checkout()">Checkout</button>
+
+</main>
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+  <script src="jsfile.js"></script>
+
+<script>
+function checkout() {
+
+  fetch('http://localhost:3000/checkout', {
+    method: 'POST'
+  })
+  .then(res => res.json())
+  .then(data => {
+
+    console.log("Order placed:", data);
+
+    // optional: show message
+    alert("Order placed successfully!");
+
+    // go to orders page AFTER checkout finishes
+    window.location.href = "orders.html";
+
+  })
+  .catch(err => {
+    console.error("Checkout failed:", err);
+    alert("Checkout failed. Check console.");
+  });
+
+}
+</script>
+
+</body>
+</html>
