@@ -218,6 +218,53 @@ app.get('/orders/:id', (req, res) => {
 });
 
 // =====================
+// DELETE ORDER
+// =====================
+app.delete('/orders/:id', (req, res) => {
+
+  const orderId = req.params.id;
+
+  console.log("Deleting order:", orderId);
+
+  db.serialize(() => {
+
+    db.run(
+      "DELETE FROM order_items WHERE order_id = ?",
+      [orderId],
+      function(err) {
+
+        if (err) {
+          return res.status(500).json({
+            error: err.message
+          });
+        }
+
+        db.run(
+          "DELETE FROM orders WHERE id = ?",
+          [orderId],
+          function(err) {
+
+            if (err) {
+              return res.status(500).json({
+                error: err.message
+              });
+            }
+
+            res.json({
+              message: "Order deleted successfully"
+            });
+
+          }
+        );
+
+      }
+    );
+
+  });
+
+});
+
+// =====================
 // HOME
 // =====================
 app.get('/', (req, res) => {
