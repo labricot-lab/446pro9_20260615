@@ -44,7 +44,7 @@ async function loadOrders() {
 
   try {
     const response = await fetch(
-      "http://localhost:3000/orders?nocache=" + Date.now(),
+      "http://192.168.0.53:3000/orders?nocache=" + Date.now(),
       {
         method: "GET",
         cache: "no-store"
@@ -72,7 +72,7 @@ async function loadOrders() {
       div.innerHTML = `
         <hr>
         <h3>Order #${order.id}</h3>
-        <p>Date: ${new Date(order.created_at + ' UTC').toLocaleString()}</p>
+        <p>Date: ${new Date(order.created_at).toLocaleString()}</p>
 
         <button onclick="toggleItems(${order.id})">
           View Items
@@ -127,7 +127,7 @@ async function toggleItems(orderId) {
 
   try {
     const response = await fetch(
-      `http://localhost:3000/orders/${orderId}?nocache=` + Date.now(),
+      `http://192.168.0.53:3000/orders/${orderId}?nocache=` + Date.now(),
       { cache: "no-store" }
     );
 
@@ -197,7 +197,7 @@ async function deleteOrder(orderId) {
   try {
 
     const response = await fetch(
-      `http://localhost:3000/orders/${orderId}`,
+      `http://192.168.0.53:3000/orders/${orderId}`,
       {
         method: "DELETE"
       }

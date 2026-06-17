@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
   buttons.forEach((btn, index) => {
     btn.addEventListener('click', () => {
 
-      fetch('http://localhost:3000/cart', {
+      fetch('http://192.168.0.53:3000/cart', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
